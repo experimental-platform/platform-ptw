@@ -40,4 +40,4 @@ if !expected_nodename.empty? && nodename != expected_nodename
   publish_to_web.set_node_name expected_nodename.gsub(/\.protonet\.info$/, "") #this is ugly
 end
 
-publish_to_web.start PORT, `netstat -r | head -n 3 | tail -n 1 | awk '{ print $2 }'`
+publish_to_web.start PORT, `netstat -r | head -n 3 | tail -n 1 | awk '{ print $2 }'`.strip
