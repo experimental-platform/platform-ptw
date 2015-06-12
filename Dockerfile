@@ -6,11 +6,21 @@ RUN \
   apt-get install -y \
     openssh-client \
     curl \
-    ruby \
-    ruby-dev \
-    ruby-bundler \
+    git \
   && \
   rm -rf /var/lib/apt/lists/*
+
+RUN cd ~ \
+  && git clone git://github.com/sstephenson/rbenv.git .rbenv \
+  && git clone git://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build \
+  && git clone https://github.com/sstephenson/rbenv-gem-rehash.git ~/.rbenv/plugins/rbenv-gem-rehash \
+  && echo 'export PATH="$HOME/.rbenv/bin:$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc \
+  && echo 'eval "$(rbenv init -)"' >> ~/.bashrc \
+  && exec $SHELL \
+  && rbenv install 2.2.2 \
+  && rbenv global 2.2.2 \
+  && echo "gem: --no-ri --no-rdoc" > ~/.gemrc \
+  && gem install bundler
 
 # Copy Gem into Container
 COPY publish_to_web-1.1.0.gem /tmp/
