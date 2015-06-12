@@ -8,7 +8,7 @@ ENV RUBY_DOWNLOAD_SHA256 5e9f8effffe97cba5ef0015feec6e1e5f3bacf6ace78cd1cdf72708
 # we purge this later to make sure our final image uses what we just built
 RUN apt-get update \
   && apt-get install -y openssh-client curl \
-  && apt-get install -y bison libgdbm-dev ruby \
+  && apt-get install -y autoconf bison libgdbm-dev ruby \
   && rm -rf /var/lib/apt/lists/* \
   && mkdir -p /usr/src/ruby \
   && curl -fSL -o ruby.tar.gz "http://cache.ruby-lang.org/pub/ruby/$RUBY_MAJOR/ruby-$RUBY_VERSION.tar.gz" \
