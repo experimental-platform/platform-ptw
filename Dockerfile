@@ -36,7 +36,7 @@ RUN cd ~ \
 # Copy Gem into Container
 COPY publish_to_web-1.1.0.gem /tmp/
 # Install gem
-RUN gem install /tmp/publish_to_web-1.1.0.gem
+RUN eval "$(rbenv init -)" && gem install /tmp/publish_to_web-1.1.0.gem
 
 ENV PROTONET_CONFIG /config
 COPY start_publish_to_web.rb /bin/start_publish_to_web
