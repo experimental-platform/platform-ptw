@@ -16,7 +16,7 @@ RUN cd ~ \
   && git clone https://github.com/sstephenson/rbenv-gem-rehash.git ~/.rbenv/plugins/rbenv-gem-rehash \
   && echo 'export PATH="$HOME/.rbenv/bin:$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc \
   && echo 'eval "$(rbenv init -)"' >> ~/.bashrc \
-  && exec $SHELL \
+  && . ~/.bashrc \
   && rbenv install 2.2.2 \
   && rbenv global 2.2.2 \
   && echo "gem: --no-ri --no-rdoc" > ~/.gemrc \
