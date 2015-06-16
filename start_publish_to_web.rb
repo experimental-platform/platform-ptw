@@ -10,9 +10,16 @@ PORT = 80
 require 'fileutils'
 require 'publish_to_web'
 
+# Monkey-Patching PublishToWeb, cause of **** gem implementation.
+class PublishToWeb
+  def version
+    "platform-alpha"
+  end
+end
+
 CONFIG_PATH = ENV["PROTONET_CONFIG"] || "/tmp"
 IDENTIFIER_FILE = "#{CONFIG_PATH}/hardware_id"
-NODENAME_FILE = "#{CONFIG_PATH}/nodename"
+NODENAME_FILE = "#{CONFIG_PATH}/hostname"
 
 FileUtils.mkdir_p(CONFIG_PATH)
 
@@ -36,8 +43,8 @@ ensure_identifier_exists
 publish_to_web = PublishToWeb.new
 _, nodename, _ = publish_to_web.info
 
-if !expected_nodename.empty? && nodename != expected_nodename
-  publish_to_web.set_node_name expected_nodename.gsub(/\.protonet\.info$/, "") #this is ugly
+if !expected_nodename.empty? && nodename != "#{expected_nodename}.protonet.info"
+  publish_to_web.set_node_name expected_nodename #this is ugly
 end
 
 publish_to_web.start PORT, `netstat -r | head -n 3 | tail -n 1 | awk '{ print $2 }'`.strip
