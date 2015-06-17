@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 PORT = 80
 # unless ENV["BINDHOST_PORT_#{PORT}_TCP_ADDR"]
 #   puts "$BINDHOST_PORT_80_TCP_ADDR is not set!"
