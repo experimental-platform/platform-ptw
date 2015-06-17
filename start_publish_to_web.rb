@@ -42,7 +42,7 @@ def gateway
   # /proc/net/route contains all infos about current routes, we extract the default Gateway
   # Example Line: eth0  00000000  012A010A  0003  0 0 0 00000000  0 0 0
   # Second column is 0.0.0.0, so third column is our default gateway
-  gateway_hex = `cat /proc/net/route | awk '$2==00000000 {print $3}'`.strip
+  gateway_hex = `awk '$2==00000000 {print $3}' /proc/net/route`.strip
   # Ex.: 012A010A -> [01 2A 01 0A] -> [1 42 1 10].reverse -> [10 1 42 1].join('.') -> 10.1.42.1
   gateway_hex.scan(/.{2}/).reverse.map { |s| s.to_i(16) }.join(".")
 end
