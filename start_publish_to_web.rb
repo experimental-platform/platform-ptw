@@ -38,6 +38,15 @@ def expected_nodename
   IO.read(NODENAME_FILE).strip rescue ""
 end
 
+def gateway
+  # /proc/net/route contains all infos about current routes, we extract the default Gateway
+  # Example Line: eth0  00000000  012A010A  0003  0 0 0 00000000  0 0 0
+  # Second column is 0.0.0.0, so third column is our default gateway
+  gateway_hex = `cat /proc/net/route | awk '$2==00000000 {print $3}'`.strip
+  # Ex.: 012A010A -> [01 2A 01 0A] -> [1 42 1 10].reverse -> [10 1 42 1].join('.') -> 10.1.42.1
+  gateway_hex.scan(/.{2}/).reverse.map { |s| s.to_i(16) }.join(".")
+end
+
 ensure_identifier_exists
 
 publish_to_web = PublishToWeb.new
@@ -47,4 +56,4 @@ if !expected_nodename.empty? && nodename != "#{expected_nodename}.protonet.info"
   publish_to_web.set_node_name expected_nodename #this is ugly
 end
 
-publish_to_web.start PORT, `netstat -r | head -n 3 | tail -n 1 | awk '{ print $2 }'`.strip
+publish_to_web.start PORT, gateway
