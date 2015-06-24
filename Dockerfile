@@ -1,4 +1,4 @@
-FROM dockerregistry.protorz.net/ubuntu:latest
+FROM experimentalplatform/ubuntu:latest
 
 ENV RUBY_MAJOR 2.0
 ENV RUBY_VERSION 2.0.0-p645
