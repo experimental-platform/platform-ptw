@@ -29,7 +29,7 @@ def ensure_identifier_exists
     IO.write(IDENTIFIER_FILE, generate_hardware_id)
   end
   # TODO: Switch to Prometheus/Graphite soon!
-  puts 'platform.' + `hostname`.strip + 'ensure_identifier_exists: ' + (Time.now.to_i - start)
+  puts 'platform.' + `hostname`.strip + 'ensure_identifier_exists: ' + (Time.now.to_i - start).to_s
 end
 
 def generate_hardware_id
@@ -37,14 +37,14 @@ def generate_hardware_id
   require 'securerandom'
   "aal-#{SecureRandom.uuid}"
   # TODO: Switch to Prometheus/Graphite soon!
-  puts 'platform.' + `hostname`.strip + 'generate_hardware_id: ' + (Time.now.to_i - start)
+  puts 'platform.' + `hostname`.strip + 'generate_hardware_id: ' + (Time.now.to_i - start).to_s
 end
 
 def expected_nodename
   start = Time.now.to_i
   IO.read(NODENAME_FILE).strip rescue ""
   # TODO: Switch to Prometheus/Graphite soon!
-  puts 'platform.' + `hostname`.strip + 'expected_nodename: ' + (Time.now.to_i - start)
+  puts 'platform.' + `hostname`.strip + 'expected_nodename: ' + (Time.now.to_i - start).to_s
 end
 
 def gateway
@@ -56,7 +56,7 @@ def gateway
   # Ex.: 012A010A -> [01 2A 01 0A] -> [1 42 1 10].reverse -> [10 1 42 1].join('.') -> 10.1.42.1
   gateway_hex.scan(/.{2}/).reverse.map { |s| s.to_i(16) }.join(".")
   # TODO: Switch to Prometheus/Graphite soon!
-  puts 'platform.' + `hostname`.strip + 'gateway: ' + (Time.now.to_i - start)
+  puts 'platform.' + `hostname`.strip + 'gateway: ' + (Time.now.to_i - start).to_s
 end
 
 
@@ -66,14 +66,14 @@ start = Time.now.to_i
 publish_to_web = PublishToWeb.new
 _, nodename, _ = publish_to_web.info
 # TODO: Switch to Prometheus/Graphite soon!
-puts 'platform.' + `hostname`.strip + 'PublishToWeb.info: ' + (Time.now.to_i - start)
+puts 'platform.' + `hostname`.strip + 'PublishToWeb.info: ' + (Time.now.to_i - start).to_s
 
 
 if !expected_nodename.empty? && nodename != "#{expected_nodename}.protonet.info"
   start = Time.now.to_i
   publish_to_web.set_node_name expected_nodename #this is ugly
   # TODO: Switch to Prometheus/Graphite soon!
-  puts 'platform.' + `hostname`.strip + 'PublishToWeb.set_node_name: ' + (Time.now.to_i - start)
+  puts 'platform.' + `hostname`.strip + 'PublishToWeb.set_node_name: ' + (Time.now.to_i - start).to_s
 end
 
 puts "Initialization complete, starting PublishToWeb.start"
