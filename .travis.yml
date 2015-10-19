@@ -13,6 +13,7 @@ script:
       SERVICE_TAG=${SERVICE_TAG:-$TRAVIS_BRANCH}; docker build -t experimentalplatform/configure:${SERVICE_TAG} .
       if [ "$TRAVIS_BRANCH" != "development" ]; then
         BODY="{ \"request\": {
+          \"message\": \"Triggered by '$TRAVIS_REPO_SLUG'\",
           \"config\": {
             \"env\": {
               \"SERVICE_TAG\": \"$TRAVIS_BRANCH\",
