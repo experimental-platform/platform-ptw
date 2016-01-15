@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 require 'publish_to_web'
+# Make sure to flush logs immediately
+STDOUT.sync = STDERR.sync = true
 
 def gateway
   # /proc/net/route contains all infos about current routes, we extract the default Gateway
