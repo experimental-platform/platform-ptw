@@ -1,6 +1,6 @@
 # Experimental Platform: PUBLISH TO WEB
 
-A microservice written in ruby that subscribes to the proprietary ptw interface.
+A microservice written in ruby that subscribes to the [protonet publish to web](https://github.com/protonet/publish_to_web) interface.
 
 This is a component of the experimental platform. To read more about it please go here:
 
