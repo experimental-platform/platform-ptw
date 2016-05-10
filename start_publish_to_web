@@ -1,7 +1,9 @@
 #!/usr/bin/env ruby
-require 'publish_to_web'
+
 # Make sure to flush logs immediately
 STDOUT.sync = STDERR.sync = true
+
+require 'publish_to_web'
 
 def gateway
   # /proc/net/route contains all infos about current routes, we extract the default Gateway
@@ -18,10 +20,13 @@ if ENV['DEBUG']
 end
 
 PublishToWeb.new(bind_host: gateway).tap do |ptw|
+
   if ENV['DEBUG'] and ENV['LICENSE_KEY']
     puts "Using license key given from ENV for debugging"
     ptw.config.license_key = ENV['LICENSE_KEY']
   end
 
+  trap :SIGUSR1 { ptw.prepare_directory }
   ptw.start_tunnel
+
 end
