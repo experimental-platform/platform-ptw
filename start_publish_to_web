@@ -26,7 +26,24 @@ PublishToWeb.new(bind_host: gateway).tap do |ptw|
     ptw.config.license_key = ENV['LICENSE_KEY']
   end
 
-  trap(:SIGUSR1) { ptw.prepare_directory }
-  ptw.start_tunnel
+  Thread.new { ptw.start_tunnel }
+
+  s_read, s_write = IO.pipe
+  %w[ USR1 TERM ].each do |s|
+    trap(s) { s_write.puts s }
+  end
+
+  while sockets = IO.select([s_read], [])
+    reading_sockets = sockets.first
+    signal = reading_sockets.first.gets
+    signal.strip!
+
+    case signal
+    when 'USR1'
+      ptw.prepare_directory
+    when 'TERM'
+      s_write.close
+    end
+  end
 
 end
