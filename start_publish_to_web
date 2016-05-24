@@ -19,31 +19,49 @@ if ENV['DEBUG']
   SKVS.adapter = SKVS::MemoryAdapter.new
 end
 
-PublishToWeb.new(bind_host: gateway).tap do |ptw|
+ptw = PublishToWeb.new bind_host: gateway
 
-  if ENV['DEBUG'] and ENV['LICENSE_KEY']
-    puts "Using license key given from ENV for debugging"
-    ptw.config.license_key = ENV['LICENSE_KEY']
-  end
+if ENV['DEBUG'] and ENV['LICENSE_KEY']
+  puts "Using license key given from ENV for debugging"
+  ptw.config.license_key = ENV['LICENSE_KEY']
+end
 
-  Thread.new { ptw.start_tunnel }
+s_read, s_write = IO.pipe
+%w[ USR1 INT QUIT TERM ].each do |s|
+  trap(s) { s_write.puts s }
+end
 
-  s_read, s_write = IO.pipe
-  %w[ USR1 TERM ].each do |s|
-    trap(s) { s_write.puts s }
-  end
+ptw.start_tunnel blocking: false
 
-  while sockets = IO.select([s_read], [])
-    reading_sockets = sockets.first
-    signal = reading_sockets.first.gets
+reading = true
+while reading and sockets = IO.select([s_read], [])
+  reading_sockets = sockets.first
+  if signal = reading_sockets.first.gets
     signal.strip!
 
     case signal
     when 'USR1'
       ptw.prepare_directory
-    when 'TERM'
-      s_write.close
+    when /(?:INT|QUIT|TERM)/
+      puts "Received #{ signal }, exiting..."
+      reading = false
     end
+  else
+    puts "Reading socket closed, exiting..."
+    reading = false
   end
-
 end
+
+puts "Closing sockets..."
+s_write.close
+s_read.close
+
+puts "Stopping tunnel..."
+# clean up after we exited the main loop
+begin
+  ptw.stop_tunnel 5 # will wait max 5 seconds
+rescue => e
+  STDERR.puts e.message, e.backtrace.join("\n")
+end
+
+puts 'Done.'
