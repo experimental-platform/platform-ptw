@@ -31,7 +31,12 @@ s_read, s_write = IO.pipe
   trap(s) { s_write.puts s }
 end
 
-ptw.start_tunnel blocking: false
+if ptw.config.enabled?
+  puts "SSH tunnel is enabled, starting it"
+  ptw.start_tunnel blocking: false
+else
+  puts "SSH tunnel is disabled, not connecting"
+end
 
 reading = true
 while reading and sockets = IO.select([s_read], [])
